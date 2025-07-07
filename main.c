@@ -11,6 +11,12 @@ int tabuleiro[TAM][TAM];
 int linhaVazia;
 int colunaVazia;
 
+// Estatísticas globais
+int totalPartidas = 0;
+int totalVitorias = 0;
+int ultimosMovimentos = 0;
+double ultimoTempo = 0.0;
+
 void inicializar();
 void imprimirTabuleiro();
 bool posicaoValida(int l, int c);
@@ -21,6 +27,7 @@ int contarInversoes();
 bool verificarCombinacaoDoEmbaralhamento();
 void jogar();
 void menu();
+void mostrarEstatisticas();
 
 void inicializar() {
     int valor = 1;
@@ -43,7 +50,7 @@ void imprimirTabuleiro() {
 
     printf("\033[1;33m────-ˋˏ ༻❁༺ ˎˊ-────\n");
     printf("ᯓ★   15 Puzzle   ★ᯓ\n");
-    printf("────-ˋˏ ༻❁༺ ˎˊ-────\033[0m\n");
+    printf("────-ˋˏ ༻❁༺ ˎˊ-────\033[0m\n\n");
 
     for (int i = 0; i < TAM; i++) {
         for (int j = 0; j < TAM; j++) {
@@ -152,13 +159,28 @@ void jogar() {
     inicializar();
     embaralhar();
 
+    totalPartidas++;
+
     int numero;
+    int movimentos = 0;
+    time_t inicio = time(NULL);
 
     while (true) {
         imprimirTabuleiro();
+        printf("Movimentos: %d\n", movimentos);
 
         if (verificarVitoria()) {
-            printf("\n\033[1;32m🎉 PARABÉNS! VOCÊ VENCEU! 🎉\033[0m\n\n");
+            time_t fim = time(NULL);
+            double tempoJogo = difftime(fim, inicio);
+
+            printf("\n\033[1;32m🎉 PARABÉNS! VOCÊ VENCEU! 🎉\033[0m\n");
+            printf("\033[1;33mTotal de movimentos: %d\n", movimentos);
+            printf("Tempo total: %.0f segundos\n\033[0m", tempoJogo);
+
+            ultimosMovimentos = movimentos;
+            ultimoTempo = tempoJogo;
+            totalVitorias++;
+
             #ifdef _WIN32
                 system("pause");
             #else
@@ -189,8 +211,32 @@ void jogar() {
         if (!mover(numero)) {
             printf("\033[1;31mMovimento inválido! A peça não está ao lado do espaço vazio.\033[0m\n");
             usleep(1500000);
+        } else {
+            movimentos++;
         }
     }
+}
+
+void mostrarEstatisticas() {
+    #ifdef _WIN32
+        system("cls");
+    #else
+        system("clear");
+    #endif
+
+    printf("\033[1;36m────- Estatísticas ────\033[0m\n");
+    printf("Partidas jogadas: %d\n", totalPartidas);
+    printf("Vitórias: %d\n", totalVitorias);
+
+    if (totalPartidas > 0 && totalVitorias > 0) {
+        printf("Movimentos da última vitória: %d\n", ultimosMovimentos);
+        printf("Tempo da última vitória: %.0f segundos\n", ultimoTempo);
+    } else {
+        printf("Ainda não há vitórias registradas.\n");
+    }
+
+    printf("\nPressione Enter para voltar ao menu...");
+    getchar(); getchar();
 }
 
 void menu() {
@@ -207,6 +253,7 @@ void menu() {
         printf("──────────୨ৎ─────────\033[0m\n");
         printf("✷ 1. Jogar\n");
         printf("✷ 2. Sair\n");
+        printf("✷ 3. Estatísticas\n");
         printf("──────────────────────\n");
         printf("Escolha uma opção: ");
 
@@ -223,8 +270,11 @@ void menu() {
                 printf("\033[1;35mSaindo....( ˶°ㅁ°) !! Até depois\033[0m\n");
                 usleep(1500000);
                 return;
+            case 3:
+                mostrarEstatisticas();
+                break;
             default:
-                printf("\033[1;31mEscolha Inválida! As opções disponíveis são 1 ou 2!\033[0m\n");
+                printf("\033[1;31mEscolha Inválida! As opções disponíveis são 1, 2 ou 3!\033[0m\n");
                 usleep(1500000);
                 break;
         }
