@@ -2,39 +2,40 @@
 #include <stdlib.h>
 #include <time.h>
 #include <stdbool.h>
-#include <unistd.h> // Para usleep() em sistemas UNIX-like. Para Windows, pode ser necessário <windows.h>
+#include <unistd.h> // Para usleep() em sistemas UNIX-like. Para Windows, pode ser necessario <windows.h>
 
 // --- Constantes do Jogo ---
 #define TAM 4
-#define INICIO 0 // Representa o espaço vazio
+#define INICIO 0 // Representa o espaco vazio
 
-// --- Variáveis Globais ---
+// --- Variaveis Globais ---
 int tabuleiro[TAM][TAM];
 int linhaVazia;
 int colunaVazia;
 
-// --- Protótipos das Funções ---
+// --- Prototipos das Funcoes ---
 void inicializar();
 void imprimirTabuleiro();
 bool posicaoValida(int l, int c);
 bool mover(int numero);
 void embaralhar();
 bool verificarVitoria();
-bool verificarCombinacaoDoEmbaralhamento(); // Bônus, para verificar se um estado é solucionável
+bool verificarCombinacaoDoEmbaralhamento(); // Bonus: verifica se o estado e solucionavel
 void jogar();
 void menu();
 
 /**
- * @brief Preenche o tabuleiro com os números de 1 a 15 e define a posição inicial do espaço vazio.
+ * @brief Preenche o tabuleiro com os numeros de 1 a 15 e define a posicao inicial do espaco vazio.
  */
 void inicializar() {
     int valor = 1;
-    for (int i = 0; i < TAM; i++) {
-        for (int j = 0; j < TAM; j++) {
+    int i, j;
+    for (i = 0; i < TAM; i++) {
+        for (j = 0; j < TAM; j++) {
             tabuleiro[i][j] = valor++;
         }
     }
-    // Define a última posição como o espaço vazio
+    // Define a ultima posicao como o espaco vazio
     linhaVazia = TAM - 1;
     colunaVazia = TAM - 1;
     tabuleiro[linhaVazia][colunaVazia] = INICIO;
@@ -51,43 +52,44 @@ void imprimirTabuleiro() {
         system("clear");
     #endif
 
-    printf("────-ˋˏ ༻❁༺ ˎˊ-────\n");
-    printf("ᯓ★   15 Puzzle   ★ᯓ\n");
-    printf("────-ˋˏ ༻❁༺ ˎˊ-────\n");
+    printf("----------------------\n");
+    printf("*   15 Puzzle   *\n");
+    printf("----------------------\n");
 
-    for (int i = 0; i < TAM; i++) {
-        for (int j = 0; j < TAM; j++) {
+    int i, j;
+    for (i = 0; i < TAM; i++) {
+        for (j = 0; j < TAM; j++) {
             if (tabuleiro[i][j] == INICIO) {
-                printf(" __ "); // Espaço vazio destacado
+                printf(" __ "); // Espaco vazio destacado
             } else {
                 printf("%3d ", tabuleiro[i][j]);
             }
         }
         printf("\n\n");
     }
-     printf("──────────────────────\n");
+    printf("----------------------\n");
 }
 
 /**
- * @brief Verifica se uma dada posição (linha, coluna) está dentro dos limites do tabuleiro.
+ * @brief Verifica se uma dada posicao (linha, coluna) esta dentro dos limites do tabuleiro.
  * @param l Linha a ser verificada.
  * @param c Coluna a ser verificada.
- * @return true se a posição for válida, false caso contrário.
+ * @return true se a posicao for valida, false caso contrario.
  */
 bool posicaoValida(int l, int c) {
     return l >= 0 && l < TAM && c >= 0 && c < TAM;
 }
 
 /**
- * @brief Move a peça com o número especificado para o espaço vazio, se o movimento for válido.
- * @param numero O número da peça a ser movida.
- * @return true se o movimento foi realizado, false caso contrário.
+ * @brief Move a peca com o numero especificado para o espaco vazio, se o movimento for valido.
+ * @param numero O numero da peca a ser movida.
+ * @return true se o movimento foi realizado, false caso contrario.
  */
 bool mover(int numero) {
     int i, j, linhaNumero, colunaNumero;
     bool achou = false;
 
-    // Encontra a posição do número que o jogador quer mover
+    // Encontra a posicao do numero que o jogador quer mover
     for (i = 0; i < TAM; i++) {
         for (j = 0; j < TAM; j++) {
             if (tabuleiro[i][j] == numero) {
@@ -100,34 +102,35 @@ bool mover(int numero) {
         if (achou) break;
     }
 
-    if (!achou) return false; // Número não está no tabuleiro
+    if (!achou) return false; // Numero nao esta no tabuleiro
 
-    // Verifica se a peça está adjacente ao espaço vazio
+    // Verifica se a peca esta adjacente ao espaco vazio
     if ((linhaNumero == linhaVazia && (colunaNumero == colunaVazia + 1 || colunaNumero == colunaVazia - 1)) ||
         (colunaNumero == colunaVazia && (linhaNumero == linhaVazia + 1 || linhaNumero == linhaVazia - 1))) {
 
-        // Troca a peça com o espaço vazio
+        // Troca a peca com o espaco vazio
         tabuleiro[linhaVazia][colunaVazia] = numero;
         tabuleiro[linhaNumero][colunaNumero] = INICIO;
 
-        // Atualiza a nova posição do espaço vazio
+        // Atualiza a nova posicao do espaco vazio
         linhaVazia = linhaNumero;
         colunaVazia = colunaNumero;
         return true;
     }
 
-    return false; // Movimento inválido
+    return false; // Movimento invalido
 }
 
 /**
- * @brief Embaralha o tabuleiro realizando um grande número de movimentos aleatórios.
- * Isso garante que o quebra-cabeça resultante seja sempre solucionável.
+ * @brief Embaralha o tabuleiro realizando varios movimentos aleatorios validos.
+ * Isso garante que o quebra-cabeca resultante seja sempre solucionavel.
  */
 void embaralhar() {
     int movimentos = 150; // Aumenta a aleatoriedade
     srand(time(NULL));
 
-    for (int k = 0; k < movimentos; k++) {
+    int k;
+    for (k = 0; k < movimentos; k++) {
         int direcao = rand() % 4; // 0: Cima, 1: Baixo, 2: Esquerda, 3: Direita
         int novaLinha = linhaVazia;
         int novaColuna = colunaVazia;
@@ -137,7 +140,7 @@ void embaralhar() {
         else if (direcao == 2) novaColuna--;// Mover para a esquerda
         else novaColuna++;                  // Mover para a direita
 
-        // Se a nova posição for válida, troca o espaço vazio com a peça vizinha
+        // Se a nova posicao for valida, troca o espaco vazio com a peca vizinha
         if (posicaoValida(novaLinha, novaColuna)) {
             tabuleiro[linhaVazia][colunaVazia] = tabuleiro[novaLinha][novaColuna];
             tabuleiro[novaLinha][novaColuna] = INICIO;
@@ -148,43 +151,45 @@ void embaralhar() {
 }
 
 /**
- * @brief Verifica se o tabuleiro está na configuração de vitória (números em ordem crescente).
- * @return true se o jogador venceu, false caso contrário.
+ * @brief Verifica se o tabuleiro esta na configuracao de vitoria (numeros em ordem crescente).
+ * @return true se o jogador venceu, false caso contrario.
  */
 bool verificarVitoria() {
     int valorEsperado = 1;
-    for (int i = 0; i < TAM; i++) {
-        for (int j = 0; j < TAM; j++) {
-            // Verifica se não é a última célula, que deve ser o espaço vazio
+    int i, j;
+    for (i = 0; i < TAM; i++) {
+        for (j = 0; j < TAM; j++) {
             if (i == TAM - 1 && j == TAM - 1) {
                 return tabuleiro[i][j] == INICIO;
             }
             if (tabuleiro[i][j] != valorEsperado) {
-                return false; // Fora de ordem
+                return false;
             }
             valorEsperado++;
         }
     }
-    return true; // Se chegou aqui, está tudo em ordem
+    return true;
 }
 
 /**
- * @brief (Bônus) Conta o número de inversões para verificar se o quebra-cabeça tem solução.
- * Uma inversão é um par de peças (a, b) tal que 'a' aparece antes de 'b' mas a > b.
- * @return O número de inversões.
+ * @brief Conta o numero de inversoes para verificar se o quebra-cabeca tem solucao.
+ * Uma inversao e um par de pecas (a, b) tal que 'a' aparece antes de 'b', mas a > b.
+ * @return O numero de inversoes.
  */
 int contarInversoes() {
     int arr[TAM * TAM];
     int k = 0;
-    for (int i = 0; i < TAM; i++) {
-        for (int j = 0; j < TAM; j++) {
+    int i, j;
+
+    for (i = 0; i < TAM; i++) {
+        for (j = 0; j < TAM; j++) {
             arr[k++] = tabuleiro[i][j];
         }
     }
 
     int inv_count = 0;
-    for (int i = 0; i < TAM * TAM - 1; i++) {
-        for (int j = i + 1; j < TAM * TAM; j++) {
+    for (i = 0; i < TAM * TAM - 1; i++) {
+        for (j = i + 1; j < TAM * TAM; j++) {
             if (arr[i] != INICIO && arr[j] != INICIO && arr[i] > arr[j]) {
                 inv_count++;
             }
@@ -194,21 +199,17 @@ int contarInversoes() {
 }
 
 /**
- * @brief (Bônus) Verifica se a combinação atual do tabuleiro é solucionável.
- * A regra de solubilidade depende do tamanho do grid (par/ímpar), do número de inversões e da
- * posição do espaço vazio.
- * @return true se for solucionável, false caso contrário.
+ * @brief Verifica se a combinacao atual do tabuleiro e solucionavel.
+ * A regra depende do tamanho do grid, do numero de inversoes e da posicao do espaco vazio.
+ * @return true se for solucionavel, false caso contrario.
  */
 bool verificarCombinacaoDoEmbaralhamento() {
     int invCount = contarInversoes();
-    // Para um grid de tamanho PAR (como 4x4):
-    // Se a linha do espaço vazio (contando de baixo para cima, 1-indexado) for PAR, o número de inversões deve ser ÍMPAR.
-    // Se a linha do espaço vazio for ÍMPAR, o número de inversões deve ser PAR.
     int linhaVaziaAPartirDeBaixo = TAM - linhaVazia;
-    if (linhaVaziaAPartirDeBaixo % 2 == 0) { // Linha par
-        return (invCount % 2 != 0); // Inversões ímpares
-    } else { // Linha ímpar
-        return (invCount % 2 == 0); // Inversões pares
+    if (linhaVaziaAPartirDeBaixo % 2 == 0) {
+        return (invCount % 2 != 0);
+    } else {
+        return (invCount % 2 == 0);
     }
 }
 
@@ -225,91 +226,88 @@ void jogar() {
         imprimirTabuleiro();
 
         if (verificarVitoria()) {
-            printf("\n🎉 PARABÉNS! VOCÊ VENCEU! 🎉\n\n");
-            // system("pause") para Windows
+            printf("\nPARABENS! VOCE VENCEU!\n\n");
             #ifdef _WIN32
                 system("pause");
             #else
                 printf("Pressione Enter para continuar...");
-                getchar(); // Pausa para o jogador ver a mensagem
+                getchar();
                 getchar();
             #endif
-            break; // Sai do loop do jogo e volta para o menu
+            break;
         }
 
-        printf("Digite o número que deseja mover (0 para voltar ao menu): ");
-        if (scanf("%d", &numero) != 1) { // Lida com entrada não-numérica
-             while (getchar() != '\n'); // Limpa o buffer de entrada
-             numero = -1; // Força a mensagem de número inválido
+        printf("Digite o numero que deseja mover (0 para voltar ao menu): ");
+        if (scanf("%d", &numero) != 1) {
+             while (getchar() != '\n');
+             numero = -1;
         }
-
 
         if (numero == 0) {
             printf("Voltando ao menu...\n");
-            usleep(1000 * 1000); // Espera 1 segundo
+            usleep(1000000);
             break;
         }
 
         if (numero < 1 || numero > 15) {
-            printf("Número inválido! Digite um valor entre 1 e 15.\n");
-            usleep(1500 * 1000);
+            printf("Numero invalido! Digite um valor entre 1 e 15.\n");
+            usleep(1500000);
             continue;
         }
 
         if (!mover(numero)) {
-            printf("Movimento inválido! A peça não está ao lado do espaço vazio.\n");
-             usleep(1500 * 1000);
+            printf("Movimento invalido! A peca nao esta ao lado do espaco vazio.\n");
+            usleep(1500000);
         }
     }
 }
 
 /**
- * @brief Exibe o menu principal e gerencia a navegação do usuário.
+ * @brief Exibe o menu principal e gerencia a navegacao do usuario.
  */
 void menu() {
     int escolha = 0;
     while (true) {
-        // Limpa a tela
         #ifdef _WIN32
             system("cls");
         #else
             system("clear");
         #endif
 
-        printf("──────────୨ৎ─────────\n");
-        printf("ᯓ★「 ✦ Menu ✦ 」★ᯓ\n");
-        printf("──────────୨ৎ─────────\n");
-        printf("✷ 1. Jogar\n");
-        printf("✷ 2. Sair\n");
-        printf("──────────────────────\n");
-        printf("Escolha uma opção: ");
+        printf("----------------------\n");
+        printf("*   Menu Principal   *\n");
+        printf("----------------------\n");
+        printf("-> 1. Jogar\n");
+        printf("-> 2. Sair\n");
+        printf("----------------------\n");
+        printf("Escolha uma opcao: ");
 
         if (scanf("%d", &escolha) != 1) {
-            while (getchar() != '\n'); // Limpa o buffer de entrada se não for número
-            escolha = -1; // Força o default
+            while (getchar() != '\n');
+            escolha = -1;
         }
-
 
         switch (escolha) {
             case 1:
                 jogar();
                 break;
             case 2:
-                printf("Saindo....( ˶°ㅁ°) !! Até depois\n");
-                usleep(1500 * 1000);
-                return; // Sai da função menu e termina o programa
+                printf("Saindo... Ate logo!\n");
+                usleep(1500000);
+                return;
             default:
-                printf("Escolha Inválida! As opções disponíveis são 1 ou 2!\n");
-                usleep(1500 * 1000); // Espera 1.5 segundos
+                printf("Escolha invalida! As opcoes disponiveis sao 1 ou 2.\n");
+                usleep(1500000);
                 break;
         }
     }
 }
 
 /**
- * @brief Função principal que inicia o programa.
+ * @brief Funcao principal que inicia o programa.
  */
 int main() {
     menu();
     return 0;
 }
+
