@@ -245,19 +245,19 @@ void jogar() {
 
         if (numero == 0) {
             printf("Voltando ao menu...\n");
-            usleep(1000000);
+            usleep(1050000);
             break;
         }
 
         if (numero < 1 || numero > 15) {
             printf("Numero invalido! Digite um valor entre 1 e 15.\n");
-            usleep(1500000);
+            usleep(2000000);
             continue;
         }
 
         if (!mover(numero)) {
             printf("Movimento invalido! A peca nao esta ao lado do espaco vazio.\n");
-            usleep(1500000);
+            usleep(2000000);
         }
     }
 }
@@ -293,11 +293,11 @@ void menu() {
                 break;
             case 2:
                 printf("Saindo... Ate logo!\n");
-                usleep(1500000);
+                usleep(2000000);
                 return;
             default:
                 printf("Escolha invalida! As opcoes disponiveis sao 1 ou 2.\n");
-                usleep(1500000);
+                usleep(2000000);
                 break;
         }
     }
@@ -310,4 +310,3 @@ int main() {
     menu();
     return 0;
 }
-
