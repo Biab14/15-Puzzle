@@ -268,8 +268,7 @@ void menu() {
                 break;
             case 2:
                 mostrarEstatisticas();
-                
-                return;
+                break;
             case 3:
                 printf("\033[1;35mSaindo....( ˶°ㅁ°) !! Até depois\033[0m\n");
                 usleep(1500000);
