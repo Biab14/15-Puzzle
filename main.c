@@ -252,8 +252,8 @@ void menu() {
         printf("ᯓ★「 ✦ Menu ✦ 」★ᯓ\n");
         printf("──────────୨ৎ─────────\033[0m\n");
         printf("✷ 1. Jogar\n");
-        printf("✷ 2. Sair\n");
-        printf("✷ 3. Estatísticas\n");
+        printf("✷ 2. Estatistica\n");
+        printf("✷ 3. Sair\n");
         printf("──────────────────────\n");
         printf("Escolha uma opção: ");
 
@@ -267,11 +267,12 @@ void menu() {
                 jogar();
                 break;
             case 2:
-                printf("\033[1;35mSaindo....( ˶°ㅁ°) !! Até depois\033[0m\n");
-                usleep(1500000);
+                mostrarEstatisticas();
+                
                 return;
             case 3:
-                mostrarEstatisticas();
+                printf("\033[1;35mSaindo....( ˶°ㅁ°) !! Até depois\033[0m\n");
+                usleep(1500000);
                 break;
             default:
                 printf("\033[1;31mEscolha Inválida! As opções disponíveis são 1, 2 ou 3!\033[0m\n");
